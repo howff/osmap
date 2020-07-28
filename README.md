@@ -22,14 +22,11 @@ llen - convert between lat,lon and grid refs
 
 # Testing
 
-As seen on MemoryMap (v5, explorer 380 1:25000) corner of Ewing building is:
-NO 39670 30000; 
-Lat,Lon = 56.45824, -2.98053
+As seen on MemoryMap (v5, explorer 380 1:25000) corner of Ewing building is NO 39670 30000 and Lat,Lon = 56.45824, -2.98053
 
-According to the Grid InQuest program (from qgsl via ordsvy):
-Lat,Lon = 56.4582614948, -2.9805352438
+According to the Grid InQuest program (from qgsl via ordsvy) Lat,Lon = 56.4582614948, -2.9805352438
 
-
+```
 % ./map NO 3967030000  (equivalent to NO 39673000, roughly NO 397300)
 From SV is (  339670,  730000)
 
@@ -46,33 +43,39 @@ longitude (WGS84): -2.980532
 
 % ./os_to_latlon NO3967030000
 56.458271,-2.980532
-
+```
 
 # API
 
 To convert National Grid E,N (m) into WGS84 lat,lon (degrees)
 
+```
 OSMap_InitConstants(E_Airy);
 en_to_latlon(easting, northing, &lat, &lon);
 latlon_to_cartesian(lat, lon, 0, &x, &y, &z);
 helmert_osgb36_to_wgs84(&x, &y, &z);
 OSMap_InitConstants(E_GRS80);
 cartesian_to_latlon(x, y, z, &lat, &lon, &height);
+```
 
 To convert WGS84 lat,lon (degrees) into National Grid E,N (m)
 
+```
 OSMap_InitConstants(E_GRS80);
 latlon_to_cartesian();
 helmert_osgb36_to_wgs84();
 OSMap_InitConstants(E_Airy);
 cartesian_to_latlon(x, y, z, &lat, &lon, &height);
 latlon_to_en(lat, lon, &easting, &northing);
-
+```
 
 # Using GDAL
 
+```
 echo "380150 402109" | gdaltransform -s_srs EPSG:27700 -t_srs EPSG:4326
 -2.30083027968938 53.5152719980087 48.8662291513756
+```
+
 Please note that behind the scenes, these datum shift parameters are applied: +towgs84=375,-111,431,0,0,0,0 (which might be what you want .. or not).
 Indeed, these are the default values for a 3-parameter transformation (I'm using GDAL 1.9.2).
 On page 33 of [1], OSGB gives the values for a 7-parameter transformation which should be more accurate in most cases. You have to revert the signs of the given values and use them like this: +towgs84=446.448,-125.157,542.06,0.1502,0.247,0.8421,-20.4894
@@ -81,7 +84,7 @@ And there is OSGB's grid shift file at [2] which leads to even more accurate res
 [2] http://www.ordnancesurvey.co.uk/oswebsite/gps/osnetfreeservices/furtherinfo/ostn02_ntv2.html
 
 
- Resources
+# Resources
 
 Information http://www.bangor.ac.uk/is/iss025/osgbfaq.htm
 
