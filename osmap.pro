@@ -1,0 +1,9 @@
+TEMPLATE = lib
+CONFIG = staticlib release
+DEFINES = DEBUG
+INCLUDEPATH = ..
+win32-msvc: DEFINES += WIN32
+HEADERS = helmert.h munro.h osmap.h landranger.h
+SOURCES = helmert.c munro.c map.c mapzone.c llen.c landranger.c
+HEADERS += qct.h inpoly.h
+SOURCES += qct.cpp inpoly.c
